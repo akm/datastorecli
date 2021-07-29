@@ -15,20 +15,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	projectID string
-	namespace string
-)
-
 func main() {
 	rootCmd := &cobra.Command{
 		Use: "datastorecli",
 	}
 
-	rootCmd.PersistentFlags().StringVar(&projectID, "project-id", "", "GCP Project ID")
-	rootCmd.PersistentFlags().StringVar(&projectID, "namespace", "", "namespace")
-
 	rootCmd.AddCommand((func() *cobra.Command {
+		var projectID string
+		var namespace string
 		var offset int
 		var limit int
 		var keysOnly bool
@@ -36,7 +30,7 @@ func main() {
 			Use:  "query KIND",
 			Args: validateFirstArgAsKind,
 			RunE: func(cmd *cobra.Command, args []string) error {
-				client, err := newClient(args)
+				client, err := newClient(projectID, namespace, args)
 				if err != nil {
 					return err
 				}
@@ -55,6 +49,9 @@ func main() {
 				}
 			},
 		}
+		r.Flags().StringVar(&projectID, "project-id", "", "GCP Project ID")
+		r.Flags().StringVar(&projectID, "namespace", "", "namespace")
+
 		r.Flags().IntVar(&offset, "offset", 0, "offset")
 		r.Flags().IntVar(&limit, "limit", 10, "limit")
 		r.Flags().BoolVar(&keysOnly, "keys-only", false, "KeysOnly")
@@ -62,6 +59,9 @@ func main() {
 	})())
 
 	rootCmd.AddCommand((func() *cobra.Command {
+		var projectID string
+		var namespace string
+
 		numberOnly := regexp.MustCompile(`\A\d+\z`)
 
 		var encodedParent string
@@ -113,7 +113,7 @@ func main() {
 					}
 				}
 
-				client, err := newClient(args)
+				client, err := newClient(projectID, namespace, args)
 				if err != nil {
 					return err
 				}
@@ -124,6 +124,9 @@ func main() {
 				}
 			},
 		}
+		r.Flags().StringVar(&projectID, "project-id", "", "GCP Project ID")
+		r.Flags().StringVar(&projectID, "namespace", "", "namespace")
+
 		r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
 		return r
 	})())
@@ -212,7 +215,7 @@ func validateFirstArgAsKind(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func newClient(args []string) (*datastorecli.Client, error) {
+func newClient(projectID, namespace string, args []string) (*datastorecli.Client, error) {
 	kind := args[0]
 	return datastorecli.NewClient(projectID, namespace, kind), nil
 }
