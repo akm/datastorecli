@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"cloud.google.com/go/datastore"
 	"github.com/akm/datastorecli"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -85,6 +86,77 @@ func main() {
 			},
 		}
 		return r
+	})())
+
+	rootCmd.AddCommand((func() *cobra.Command {
+		keyCommand := &cobra.Command{
+			Use: "key",
+		}
+		keyCommand.AddCommand((func() *cobra.Command {
+			var id int64
+			var name string
+			var encodedParent string
+			r := &cobra.Command{
+				Use:  "encode KIND",
+				Args: validateFirstArgAsKind,
+				RunE: func(cmd *cobra.Command, args []string) error {
+					kind := args[0]
+
+					var parentKey *datastore.Key
+					if encodedParent != "" {
+						var err error
+						if parentKey, err = datastore.DecodeKey(encodedParent); err != nil {
+							return errors.Wrapf(err, "Failed to encode")
+						}
+					} else {
+						parentKey = nil
+					}
+
+					var key *datastore.Key
+					if id != 0 {
+						key = datastore.IDKey(kind, id, parentKey)
+					} else if name != "" {
+						key = datastore.NameKey(kind, name, parentKey)
+					} else {
+						return errors.Errorf("key encode requires id or name")
+					}
+
+					fmt.Fprint(os.Stdout, key.Encode())
+					return nil
+				},
+			}
+			r.Flags().Int64Var(&id, "id", int64(0), "id")
+			r.Flags().StringVar(&name, "name", "", "name")
+			r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
+
+			return r
+		})())
+
+		keyCommand.AddCommand((func() *cobra.Command {
+			validateArgs := func(cmd *cobra.Command, args []string) error {
+				if len(args) < 1 {
+					return errors.Errorf("encoded-key is required")
+				}
+				return nil
+			}
+
+			r := &cobra.Command{
+				Use:  "decode ENCODED-KEY",
+				Args: validateArgs,
+				RunE: func(cmd *cobra.Command, args []string) error {
+					encoded := args[0]
+					key, err := datastore.DecodeKey(encoded)
+					if err != nil {
+						return err
+					}
+					fmt.Fprint(os.Stdout, key.String())
+					return nil
+				},
+			}
+			return r
+		})())
+
+		return keyCommand
 	})())
 
 	if err := rootCmd.Execute(); err != nil {
