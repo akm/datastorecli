@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"cloud.google.com/go/datastore"
@@ -60,31 +62,69 @@ func main() {
 	})())
 
 	rootCmd.AddCommand((func() *cobra.Command {
-		validateArgs := func(cmd *cobra.Command, args []string) error {
-			if err := validateFirstArgAsKind(cmd, args); err != nil {
-				return err
-			}
-			if len(args) < 2 {
-				return errors.Errorf("entity name is required")
-			}
-			return nil
-		}
+		numberOnly := regexp.MustCompile(`\A\d+\z`)
 
+		var encodedParent string
 		r := &cobra.Command{
-			Use:  "get KIND NAME",
-			Args: validateArgs,
+			Use:   "get KIND-OR-ENCODED-KEY [ID-OR-NAME]",
+			Short: "Get an entity",
+			Long: `Get an entity by one of these arguments
+- get KIND ID-KEY
+- get KIND NAME-KEY
+- get ENCODED-KEY
+			`,
+			Args: func(cmd *cobra.Command, args []string) error {
+				if err := validateFirstArgAsKind(cmd, args); err != nil {
+					return err
+				}
+				if len(args) < 1 {
+					return errors.Errorf("get requires 1 or 2 arguments")
+				}
+				return nil
+			},
 			RunE: func(cmd *cobra.Command, args []string) error {
+				var key *datastore.Key
+				if len(args) == 1 {
+					var err error
+					if key, err = datastore.DecodeKey(args[0]); err != nil {
+						return errors.Wrapf(err, "Failed to decode %s", args[0])
+					}
+				} else {
+					kind := args[0]
+
+					var parentKey *datastore.Key
+					if encodedParent != "" {
+						var err error
+						if parentKey, err = datastore.DecodeKey(encodedParent); err != nil {
+							return errors.Wrapf(err, "Failed to decode %s", encodedParent)
+						}
+					} else {
+						parentKey = nil
+					}
+
+					if numberOnly.MatchString(args[1]) {
+						id, err := strconv.ParseInt(args[1], 10, 64)
+						if err != nil {
+							return err
+						}
+						key = datastore.IDKey(kind, id, parentKey)
+					} else {
+						key = datastore.NameKey(kind, args[1], parentKey)
+					}
+				}
+
 				client, err := newClient(args)
 				if err != nil {
 					return err
 				}
-				if d, err := client.Get(context.Background(), args[1]); err != nil {
+				if d, err := client.Get(context.Background(), key); err != nil {
 					return err
 				} else {
 					return formatData(d)
 				}
 			},
 		}
+		r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
 		return r
 	})())
 
@@ -106,7 +146,7 @@ func main() {
 					if encodedParent != "" {
 						var err error
 						if parentKey, err = datastore.DecodeKey(encodedParent); err != nil {
-							return errors.Wrapf(err, "Failed to encode")
+							return errors.Wrapf(err, "Failed to decode %s", encodedParent)
 						}
 					} else {
 						parentKey = nil

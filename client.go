@@ -25,20 +25,15 @@ func (c *Client) dsClient(ctx context.Context) (*datastore.Client, error) {
 	return client, nil
 }
 
-func (c *Client) Get(ctx context.Context, name string) (interface{}, error) {
+func (c *Client) Get(ctx context.Context, key *datastore.Key) (interface{}, error) {
 	ds, err := c.dsClient(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	k := datastore.NameKey(c.kind, name, nil)
-	if c.namespace != "" {
-		k.Namespace = c.namespace
-	}
-
 	dst := AnyEntity{}
-	if err := ds.Get(ctx, k, &dst); err != nil {
-		return nil, errors.Wrapf(err, "failed to get by %s from %s", name, c.kind)
+	if err := ds.Get(ctx, key, &dst); err != nil {
+		return nil, errors.Wrapf(err, "failed to get by %s from %s", key.String(), c.kind)
 	}
 
 	return dst, nil
