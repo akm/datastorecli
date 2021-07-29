@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/akm/datastorecli"
+	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 )
 
@@ -19,10 +20,6 @@ func main() {
 			},
 			&cli.StringFlag{
 				Name: "namespace",
-			},
-			&cli.StringFlag{
-				Name:     "kind",
-				Required: true,
 			},
 		},
 		Commands: []*cli.Command{
@@ -41,15 +38,20 @@ func main() {
 						Name: "keys-only",
 					},
 				},
+				ArgsUsage: "KIND",
 				Action: func(c *cli.Context) error {
+					client, err := newClient(c)
+					if err != nil {
+						return err
+					}
 					if c.Bool("keys-only") {
-						if d, err := newClient(c).QueryKeys(context.Background(), c.Int("offset"), c.Int("limit")); err != nil {
+						if d, err := client.QueryKeys(context.Background(), c.Int("offset"), c.Int("limit")); err != nil {
 							return err
 						} else {
 							return formatStrings(d)
 						}
 					} else {
-						if d, err := newClient(c).QueryData(context.Background(), c.Int("offset"), c.Int("limit")); err != nil {
+						if d, err := client.QueryData(context.Background(), c.Int("offset"), c.Int("limit")); err != nil {
 							return err
 						} else {
 							return formatArray(d)
@@ -59,9 +61,14 @@ func main() {
 				},
 			},
 			{
-				Name: "get",
+				Name:      "get",
+				ArgsUsage: "KIND",
 				Action: func(c *cli.Context) error {
-					if d, err := newClient(c).Get(context.Background(), c.Args().Get(0)); err != nil {
+					client, err := newClient(c)
+					if err != nil {
+						return err
+					}
+					if d, err := client.Get(context.Background(), c.Args().Get(0)); err != nil {
 						return err
 					} else {
 						return formatData(d)
@@ -78,8 +85,12 @@ func main() {
 	}
 }
 
-func newClient(c *cli.Context) *datastorecli.Client {
-	return datastorecli.NewClient(c.String("project-id"), c.String("namespace"), c.String("kind"))
+func newClient(c *cli.Context) (*datastorecli.Client, error) {
+	if c.Args().Len() < 1 {
+		return nil, errors.Errorf("kind is required")
+	}
+	kind := c.Args().First()
+	return datastorecli.NewClient(c.String("project-id"), c.String("namespace"), kind), nil
 }
 
 func formatData(d interface{}) error {
