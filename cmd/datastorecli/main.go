@@ -9,88 +9,100 @@ import (
 
 	"github.com/akm/datastorecli"
 	"github.com/pkg/errors"
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
+)
+
+var (
+	projectID string
+	namespace string
 )
 
 func main() {
-	app := &cli.App{
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name: "project-id",
-			},
-			&cli.StringFlag{
-				Name: "namespace",
-			},
-		},
-		Commands: []*cli.Command{
-			{
-				Name: "query",
-				Flags: []cli.Flag{
-					&cli.IntFlag{
-						Name:  "offset",
-						Value: 0,
-					},
-					&cli.IntFlag{
-						Name:  "limit",
-						Value: 100,
-					},
-					&cli.BoolFlag{
-						Name: "keys-only",
-					},
-				},
-				ArgsUsage: "KIND",
-				Action: func(c *cli.Context) error {
-					client, err := newClient(c)
-					if err != nil {
-						return err
-					}
-					if c.Bool("keys-only") {
-						if d, err := client.QueryKeys(context.Background(), c.Int("offset"), c.Int("limit")); err != nil {
-							return err
-						} else {
-							return formatStrings(d)
-						}
-					} else {
-						if d, err := client.QueryData(context.Background(), c.Int("offset"), c.Int("limit")); err != nil {
-							return err
-						} else {
-							return formatArray(d)
-						}
-					}
-
-				},
-			},
-			{
-				Name:      "get",
-				ArgsUsage: "KIND",
-				Action: func(c *cli.Context) error {
-					client, err := newClient(c)
-					if err != nil {
-						return err
-					}
-					if d, err := client.Get(context.Background(), c.Args().Get(0)); err != nil {
-						return err
-					} else {
-						return formatData(d)
-					}
-				},
-			},
-		},
+	rootCmd := &cobra.Command{
+		Use: "datastorecli",
 	}
 
-	err := app.Run(os.Args)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+	rootCmd.PersistentFlags().StringVar(&projectID, "project-id", "", "GCP Project ID")
+	rootCmd.PersistentFlags().StringVar(&projectID, "namespace", "", "namespace")
+
+	rootCmd.AddCommand((func() *cobra.Command {
+		var offset int
+		var limit int
+		var keysOnly bool
+		r := &cobra.Command{
+			Use:  "query KIND",
+			Args: validateFirstArgAsKind,
+			RunE: func(cmd *cobra.Command, args []string) error {
+				client, err := newClient(args)
+				if err != nil {
+					return err
+				}
+				if keysOnly {
+					if d, err := client.QueryKeys(context.Background(), offset, limit); err != nil {
+						return err
+					} else {
+						return formatStrings(d)
+					}
+				} else {
+					if d, err := client.QueryData(context.Background(), offset, limit); err != nil {
+						return err
+					} else {
+						return formatArray(d)
+					}
+				}
+			},
+		}
+		r.Flags().IntVar(&offset, "offset", 0, "offset")
+		r.Flags().IntVar(&limit, "limit", 10, "limit")
+		r.Flags().BoolVar(&keysOnly, "keys-only", false, "KeysOnly")
+		return r
+	})())
+
+	rootCmd.AddCommand((func() *cobra.Command {
+		validateArgs := func(cmd *cobra.Command, args []string) error {
+			if err := validateFirstArgAsKind(cmd, args); err != nil {
+				return err
+			}
+			if len(args) < 2 {
+				return errors.Errorf("entity name is required")
+			}
+			return nil
+		}
+
+		r := &cobra.Command{
+			Use:  "get KIND NAME",
+			Args: validateArgs,
+			RunE: func(cmd *cobra.Command, args []string) error {
+				client, err := newClient(args)
+				if err != nil {
+					return err
+				}
+				if d, err := client.Get(context.Background(), args[1]); err != nil {
+					return err
+				} else {
+					return formatData(d)
+				}
+			},
+		}
+		return r
+	})())
+
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func newClient(c *cli.Context) (*datastorecli.Client, error) {
-	if c.Args().Len() < 1 {
-		return nil, errors.Errorf("kind is required")
+func validateFirstArgAsKind(cmd *cobra.Command, args []string) error {
+	if len(args) < 1 {
+		return errors.Errorf("kind is required")
 	}
-	kind := c.Args().First()
-	return datastorecli.NewClient(c.String("project-id"), c.String("namespace"), kind), nil
+	return nil
+}
+
+func newClient(args []string) (*datastorecli.Client, error) {
+	kind := args[0]
+	return datastorecli.NewClient(projectID, namespace, kind), nil
 }
 
 func formatData(d interface{}) error {
