@@ -15,17 +15,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func DecodeKey(encoded string) (*datastore.Key, error) {
-	if encoded == "" {
-		return nil, nil
-	}
-	if key, err := datastore.DecodeKey(encoded); err != nil {
-		return nil, errors.Wrapf(err, "Failed to decode %s", encoded)
-	} else {
-		return key, nil
-	}
-}
-
 func main() {
 	rootCmd := &cobra.Command{
 		Use: "datastorecli",
@@ -106,14 +95,14 @@ func main() {
 				var key *datastore.Key
 				if len(args) == 1 {
 					var err error
-					key, err = DecodeKey(args[0])
+					key, err = datastorecli.DecodeKey(args[0])
 					if err != nil {
 						return err
 					}
 				} else {
 					kind := args[0]
 
-					parentKey, err := DecodeKey(encodedParent)
+					parentKey, err := datastorecli.DecodeKey(encodedParent)
 					if err != nil {
 						return err
 					}
@@ -159,7 +148,7 @@ func main() {
 				RunE: func(cmd *cobra.Command, args []string) error {
 					kind := args[0]
 
-					parentKey, err := DecodeKey(encodedParent)
+					parentKey, err := datastorecli.DecodeKey(encodedParent)
 					if err != nil {
 						return err
 					}
@@ -196,7 +185,7 @@ func main() {
 				Use:  "decode ENCODED-KEY",
 				Args: validateArgs,
 				RunE: func(cmd *cobra.Command, args []string) error {
-					key, err := DecodeKey(args[0])
+					key, err := datastorecli.DecodeKey(args[0])
 					if err != nil {
 						return err
 					}
