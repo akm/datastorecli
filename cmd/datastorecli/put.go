@@ -10,6 +10,7 @@ import (
 
 func putCommand(clientFn clientFunc) *cobra.Command {
 	var encodedParent string
+	var incompleteKey bool
 	r := &cobra.Command{
 		Use:   "put KIND-OR-ENCODED-KEY [ID-OR-NAME-OR-JSON-DATA] [JSON-DATA]",
 		Short: "Pet an entity",
@@ -25,7 +26,7 @@ func putCommand(clientFn clientFunc) *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			key, err := buildKey(args, len(args) == 2, encodedParent)
+			key, err := buildKey(args, len(args) == 2, incompleteKey, encodedParent)
 			if err != nil {
 				return err
 			}
@@ -52,5 +53,6 @@ func putCommand(clientFn clientFunc) *cobra.Command {
 	}
 
 	r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
+	r.Flags().BoolVar(&incompleteKey, "incomplete-key", false, "Incomplete key")
 	return r
 }

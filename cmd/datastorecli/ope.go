@@ -10,8 +10,15 @@ import (
 
 var numberOnly = regexp.MustCompile(`\A\d+\z`)
 
-func buildKey(args []string, encodedKey bool, encodedParent string) (*datastore.Key, error) {
+func buildKey(args []string, encodedKey, incompleteKey bool, encodedParent string) (*datastore.Key, error) {
 	if encodedKey {
+		parentKey, err := datastorecli.DecodeKey(encodedParent)
+		if err != nil {
+			return nil, err
+		}
+		key := datastore.IncompleteKey(args[0], parentKey)
+		return key, nil
+	} else if encodedKey {
 		key, err := datastorecli.DecodeKey(args[0])
 		if err != nil {
 			return nil, err
