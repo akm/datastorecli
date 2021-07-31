@@ -14,10 +14,7 @@ func queryCommand(clientFn clientFunc) *cobra.Command {
 		Use:  "query KIND",
 		Args: validateFirstArgAsKind,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := clientFn()
-			if err != nil {
-				return err
-			}
+			client := clientFn()
 			ctx := context.Background()
 			kind := args[0]
 			if keysOnly {

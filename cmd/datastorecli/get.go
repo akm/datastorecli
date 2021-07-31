@@ -59,10 +59,7 @@ func getCommand(clientFn clientFunc) *cobra.Command {
 				}
 			}
 
-			client, err := clientFn()
-			if err != nil {
-				return err
-			}
+			client := clientFn()
 			if d, err := client.Get(context.Background(), key); err != nil {
 				return err
 			} else {

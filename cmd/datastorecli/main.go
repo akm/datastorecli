@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/akm/datastorecli"
 	"github.com/spf13/cobra"
 )
 
@@ -28,8 +27,4 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-}
-
-func newClient(projectID, namespace string) (*datastorecli.Client, error) {
-	return datastorecli.NewClient(projectID, namespace), nil
 }
