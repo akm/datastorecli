@@ -11,11 +11,11 @@ import (
 
 type Client struct {
 	projectID string
-	namespace string
+	namespace Namespace
 }
 
 func NewClient(projectID string, namespace string) *Client {
-	return &Client{projectID: projectID, namespace: namespace}
+	return &Client{projectID: projectID, namespace: Namespace(namespace)}
 }
 
 func (c *Client) dsClient(ctx context.Context) (*datastore.Client, error) {
@@ -66,14 +66,8 @@ func (c *Client) Get(ctx context.Context, key *datastore.Key) (interface{}, erro
 }
 
 func (c *Client) buildQuery(ctx context.Context, kind string, offset, limit int) *datastore.Query {
-	q := datastore.NewQuery(kind).
-		Limit(limit).
-		Offset(offset)
-
-	if c.namespace != "" {
-		q = q.Namespace(c.namespace)
-	}
-	return q
+	q := datastore.NewQuery(kind).Limit(limit).Offset(offset)
+	return c.namespace.PrepareQuery(q)
 }
 
 func (c *Client) QueryKeys(ctx context.Context, kind string, offset, limit int) (*[]string, error) {
@@ -122,13 +116,13 @@ func (c *Client) BuildKey(args []string, encodedKey, incompleteKey bool, encoded
 			return nil, err
 		}
 		key := datastore.IncompleteKey(args[0], parentKey)
-		return key, nil
+		return c.namespace.PrepareKey(key), nil
 	} else if encodedKey {
 		key, err := DecodeKey(args[0])
 		if err != nil {
 			return nil, err
 		}
-		return key, nil
+		return c.namespace.PrepareKey(key), nil
 	} else {
 		kind := args[0]
 
@@ -137,14 +131,16 @@ func (c *Client) BuildKey(args []string, encodedKey, incompleteKey bool, encoded
 			return nil, err
 		}
 
+		var key *datastore.Key
 		if numberOnly.MatchString(args[1]) {
 			id, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
 				return nil, err
 			}
-			return datastore.IDKey(kind, id, parentKey), nil
+			key = datastore.IDKey(kind, id, parentKey)
 		} else {
-			return datastore.NameKey(kind, args[1], parentKey), nil
+			key = datastore.NameKey(kind, args[1], parentKey)
 		}
+		return c.namespace.PrepareKey(key), nil
 	}
 }
