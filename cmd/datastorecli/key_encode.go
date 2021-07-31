@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func keyEncodeCommand() *cobra.Command {
+func keyEncodeCommand(fn namespaceFunc) *cobra.Command {
 	var id int64
 	var name string
 	var encodedParent string
@@ -33,6 +33,8 @@ func keyEncodeCommand() *cobra.Command {
 			} else {
 				return errors.Errorf("key encode requires id or name")
 			}
+			namespace := fn()
+			namespace.PrepareKey(key)
 
 			fmt.Fprint(os.Stdout, key.Encode())
 			return nil

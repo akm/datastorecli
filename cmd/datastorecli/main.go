@@ -20,7 +20,7 @@ func main() {
 		keyCommand := &cobra.Command{
 			Use: "key",
 		}
-		keyCommand.AddCommand(keyEncodeCommand())
+		keyCommand.AddCommand(withNamespace(keyEncodeCommand)())
 		keyCommand.AddCommand(keyDecodeCommand())
 		return keyCommand
 	})())
