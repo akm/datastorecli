@@ -15,6 +15,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func DecodeKey(encoded string) (*datastore.Key, error) {
+	if encoded == "" {
+		return nil, nil
+	}
+	if key, err := datastore.DecodeKey(encoded); err != nil {
+		return nil, errors.Wrapf(err, "Failed to decode %s", encoded)
+	} else {
+		return key, nil
+	}
+}
+
 func main() {
 	rootCmd := &cobra.Command{
 		Use: "datastorecli",
@@ -95,20 +106,16 @@ func main() {
 				var key *datastore.Key
 				if len(args) == 1 {
 					var err error
-					if key, err = datastore.DecodeKey(args[0]); err != nil {
-						return errors.Wrapf(err, "Failed to decode %s", args[0])
+					key, err = DecodeKey(args[0])
+					if err != nil {
+						return err
 					}
 				} else {
 					kind := args[0]
 
-					var parentKey *datastore.Key
-					if encodedParent != "" {
-						var err error
-						if parentKey, err = datastore.DecodeKey(encodedParent); err != nil {
-							return errors.Wrapf(err, "Failed to decode %s", encodedParent)
-						}
-					} else {
-						parentKey = nil
+					parentKey, err := DecodeKey(encodedParent)
+					if err != nil {
+						return err
 					}
 
 					if numberOnly.MatchString(args[1]) {
@@ -152,14 +159,9 @@ func main() {
 				RunE: func(cmd *cobra.Command, args []string) error {
 					kind := args[0]
 
-					var parentKey *datastore.Key
-					if encodedParent != "" {
-						var err error
-						if parentKey, err = datastore.DecodeKey(encodedParent); err != nil {
-							return errors.Wrapf(err, "Failed to decode %s", encodedParent)
-						}
-					} else {
-						parentKey = nil
+					parentKey, err := DecodeKey(encodedParent)
+					if err != nil {
+						return err
 					}
 
 					var key *datastore.Key
@@ -194,8 +196,7 @@ func main() {
 				Use:  "decode ENCODED-KEY",
 				Args: validateArgs,
 				RunE: func(cmd *cobra.Command, args []string) error {
-					encoded := args[0]
-					key, err := datastore.DecodeKey(encoded)
+					key, err := DecodeKey(args[0])
 					if err != nil {
 						return err
 					}
