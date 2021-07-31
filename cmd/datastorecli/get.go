@@ -28,7 +28,7 @@ func getCommand(clientFn clientFunc) *cobra.Command {
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client := clientFn()
-			key, err := client.BuildKey(args, len(args) == 1, false, encodedParent)
+			key, err := client.Namespace.BuildKey(args, len(args) == 1, false, encodedParent)
 			if err != nil {
 				return err
 			}

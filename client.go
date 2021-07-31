@@ -2,8 +2,6 @@ package datastorecli
 
 import (
 	"context"
-	"regexp"
-	"strconv"
 
 	"cloud.google.com/go/datastore"
 	"github.com/pkg/errors"
@@ -11,11 +9,11 @@ import (
 
 type Client struct {
 	projectID string
-	namespace Namespace
+	Namespace Namespace
 }
 
 func NewClient(projectID string, namespace string) *Client {
-	return &Client{projectID: projectID, namespace: Namespace(namespace)}
+	return &Client{projectID: projectID, Namespace: Namespace(namespace)}
 }
 
 func (c *Client) dsClient(ctx context.Context) (*datastore.Client, error) {
@@ -65,17 +63,12 @@ func (c *Client) Get(ctx context.Context, key *datastore.Key) (interface{}, erro
 	return dst, nil
 }
 
-func (c *Client) buildQuery(ctx context.Context, kind string, offset, limit int) *datastore.Query {
-	q := datastore.NewQuery(kind).Limit(limit).Offset(offset)
-	return c.namespace.PrepareQuery(q)
-}
-
 func (c *Client) QueryKeys(ctx context.Context, kind string, offset, limit int) (*[]string, error) {
 	ds, err := c.dsClient(ctx)
 	if err != nil {
 		return nil, err
 	}
-	q := c.buildQuery(ctx, kind, offset, limit)
+	q := c.Namespace.BuildQuery(ctx, kind, offset, limit)
 
 	q = q.KeysOnly()
 	keys, err := ds.GetAll(ctx, q, nil)
@@ -94,7 +87,7 @@ func (c *Client) QueryData(ctx context.Context, kind string, offset, limit int) 
 	if err != nil {
 		return nil, err
 	}
-	q := c.buildQuery(ctx, kind, offset, limit)
+	q := c.Namespace.BuildQuery(ctx, kind, offset, limit)
 
 	var dst []AnyEntity
 	if _, err := ds.GetAll(ctx, q, &dst); err != nil {
@@ -105,42 +98,4 @@ func (c *Client) QueryData(ctx context.Context, kind string, offset, limit int) 
 		r[i] = x
 	}
 	return &r, nil
-}
-
-var numberOnly = regexp.MustCompile(`\A\d+\z`)
-
-func (c *Client) BuildKey(args []string, encodedKey, incompleteKey bool, encodedParent string) (*datastore.Key, error) {
-	if encodedKey {
-		parentKey, err := DecodeKey(encodedParent)
-		if err != nil {
-			return nil, err
-		}
-		key := datastore.IncompleteKey(args[0], parentKey)
-		return c.namespace.PrepareKey(key), nil
-	} else if encodedKey {
-		key, err := DecodeKey(args[0])
-		if err != nil {
-			return nil, err
-		}
-		return c.namespace.PrepareKey(key), nil
-	} else {
-		kind := args[0]
-
-		parentKey, err := DecodeKey(encodedParent)
-		if err != nil {
-			return nil, err
-		}
-
-		var key *datastore.Key
-		if numberOnly.MatchString(args[1]) {
-			id, err := strconv.ParseInt(args[1], 10, 64)
-			if err != nil {
-				return nil, err
-			}
-			key = datastore.IDKey(kind, id, parentKey)
-		} else {
-			key = datastore.NameKey(kind, args[1], parentKey)
-		}
-		return c.namespace.PrepareKey(key), nil
-	}
 }
