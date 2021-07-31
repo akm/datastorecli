@@ -24,12 +24,12 @@ func deleteCommand(clientFn clientFunc) *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			key, err := buildKey(args, len(args) == 1, false, encodedParent)
+			client := clientFn()
+			key, err := client.BuildKey(args, len(args) == 1, false, encodedParent)
 			if err != nil {
 				return err
 			}
 
-			client := clientFn()
 			if err := client.Delete(context.Background(), key); err != nil {
 				return err
 			} else {
