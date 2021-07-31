@@ -38,6 +38,17 @@ func (c *Client) Put(ctx context.Context, key *datastore.Key, src interface{}) (
 	return result, nil
 }
 
+func (c *Client) Delete(ctx context.Context, key *datastore.Key) error {
+	ds, err := c.dsClient(ctx)
+	if err != nil {
+		return err
+	}
+	if err := ds.Delete(ctx, key); err != nil {
+		return errors.Wrapf(err, "failed to get by %s from %s", key.String(), key.Kind)
+	}
+	return nil
+}
+
 func (c *Client) Get(ctx context.Context, key *datastore.Key) (interface{}, error) {
 	ds, err := c.dsClient(ctx)
 	if err != nil {
