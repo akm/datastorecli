@@ -20,40 +20,7 @@ func main() {
 		Use: "datastorecli",
 	}
 
-	rootCmd.AddCommand(connectableCommandFunc(func(clientFn clientFunc) *cobra.Command {
-		var offset int
-		var limit int
-		var keysOnly bool
-		r := &cobra.Command{
-			Use:  "query KIND",
-			Args: validateFirstArgAsKind,
-			RunE: func(cmd *cobra.Command, args []string) error {
-				client, err := clientFn()
-				if err != nil {
-					return err
-				}
-				ctx := context.Background()
-				kind := args[0]
-				if keysOnly {
-					if d, err := client.QueryKeys(ctx, kind, offset, limit); err != nil {
-						return err
-					} else {
-						return formatStrings(d)
-					}
-				} else {
-					if d, err := client.QueryData(ctx, kind, offset, limit); err != nil {
-						return err
-					} else {
-						return formatArray(d)
-					}
-				}
-			},
-		}
-		r.Flags().IntVar(&offset, "offset", 0, "offset")
-		r.Flags().IntVar(&limit, "limit", 10, "limit")
-		r.Flags().BoolVar(&keysOnly, "keys-only", false, "KeysOnly")
-		return r
-	})())
+	rootCmd.AddCommand(connectableCommandFunc(queryCommand)())
 
 	rootCmd.AddCommand(connectableCommandFunc(func(clientFn clientFunc) *cobra.Command {
 		numberOnly := regexp.MustCompile(`\A\d+\z`)
