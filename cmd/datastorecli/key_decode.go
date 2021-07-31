@@ -25,7 +25,11 @@ func keyDecodeCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			fmt.Fprint(os.Stdout, key.String())
+			if key.Namespace != "" {
+				fmt.Fprintf(os.Stdout, "%s (namespace:%s)", key.String(), key.Namespace)
+			} else {
+				fmt.Fprint(os.Stdout, key.String())
+			}
 			return nil
 		},
 	}
