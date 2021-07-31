@@ -20,14 +20,14 @@ func main() {
 		Use: "datastorecli",
 	}
 
-	type clientFunc func(kind string) (*datastorecli.Client, error)
+	type clientFunc func() (*datastorecli.Client, error)
 
 	connectableCommandFunc := func(fn func(clientFn clientFunc) *cobra.Command) func() *cobra.Command {
 		return func() *cobra.Command {
 			var projectID string
 			var namespace string
-			r := fn(func(kind string) (*datastorecli.Client, error) {
-				return newClient(projectID, namespace, kind)
+			r := fn(func() (*datastorecli.Client, error) {
+				return newClient(projectID, namespace)
 			})
 			r.Flags().StringVar(&projectID, "project-id", "", "GCP Project ID")
 			r.Flags().StringVar(&namespace, "namespace", "", "namespace")
@@ -43,18 +43,20 @@ func main() {
 			Use:  "query KIND",
 			Args: validateFirstArgAsKind,
 			RunE: func(cmd *cobra.Command, args []string) error {
-				client, err := clientFn(args[0])
+				client, err := clientFn()
 				if err != nil {
 					return err
 				}
+				ctx := context.Background()
+				kind := args[0]
 				if keysOnly {
-					if d, err := client.QueryKeys(context.Background(), offset, limit); err != nil {
+					if d, err := client.QueryKeys(ctx, kind, offset, limit); err != nil {
 						return err
 					} else {
 						return formatStrings(d)
 					}
 				} else {
-					if d, err := client.QueryData(context.Background(), offset, limit); err != nil {
+					if d, err := client.QueryData(ctx, kind, offset, limit); err != nil {
 						return err
 					} else {
 						return formatArray(d)
@@ -120,7 +122,7 @@ func main() {
 					}
 				}
 
-				client, err := clientFn(args[0])
+				client, err := clientFn()
 				if err != nil {
 					return err
 				}
@@ -220,8 +222,8 @@ func validateFirstArgAsKind(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func newClient(projectID, namespace, kind string) (*datastorecli.Client, error) {
-	return datastorecli.NewClient(projectID, namespace, kind), nil
+func newClient(projectID, namespace string) (*datastorecli.Client, error) {
+	return datastorecli.NewClient(projectID, namespace), nil
 }
 
 func formatData(d interface{}) error {
