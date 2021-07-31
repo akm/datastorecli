@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/akm/datastorecli"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -17,9 +16,7 @@ func main() {
 	}
 
 	rootCmd.AddCommand(connectableCommandFunc(queryCommand)())
-
 	rootCmd.AddCommand(connectableCommandFunc(getCommand)())
-
 	rootCmd.AddCommand((func() *cobra.Command {
 		keyCommand := &cobra.Command{
 			Use: "key",
@@ -33,13 +30,6 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-}
-
-func validateFirstArgAsKind(cmd *cobra.Command, args []string) error {
-	if len(args) < 1 {
-		return errors.Errorf("kind is required")
-	}
-	return nil
 }
 
 func newClient(projectID, namespace string) (*datastorecli.Client, error) {
