@@ -18,6 +18,11 @@ func formatData(d interface{}) error {
 	return nil
 }
 
+func formatStringer(d fmt.Stringer) error {
+	fmt.Fprintf(os.Stdout, "%s", d.String())
+	return nil
+}
+
 func formatArray(d *[]interface{}) error {
 	for _, i := range *d {
 		if err := formatData(i); err != nil {

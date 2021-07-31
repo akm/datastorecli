@@ -24,6 +24,20 @@ func (c *Client) dsClient(ctx context.Context) (*datastore.Client, error) {
 	return client, nil
 }
 
+func (c *Client) Put(ctx context.Context, key *datastore.Key, src interface{}) (*datastore.Key, error) {
+	ds, err := c.dsClient(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := ds.Put(ctx, key, src)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to put %v with %s to %s", src, key.String(), key.Kind)
+	}
+
+	return result, nil
+}
+
 func (c *Client) Get(ctx context.Context, key *datastore.Key) (interface{}, error) {
 	ds, err := c.dsClient(ctx)
 	if err != nil {

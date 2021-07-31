@@ -14,6 +14,7 @@ func main() {
 
 	rootCmd.AddCommand(connectableCommandFunc(queryCommand)())
 	rootCmd.AddCommand(connectableCommandFunc(getCommand)())
+	rootCmd.AddCommand(connectableCommandFunc(putCommand)())
 	rootCmd.AddCommand((func() *cobra.Command {
 		keyCommand := &cobra.Command{
 			Use: "key",
