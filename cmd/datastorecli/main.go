@@ -20,21 +20,6 @@ func main() {
 		Use: "datastorecli",
 	}
 
-	type clientFunc func() (*datastorecli.Client, error)
-
-	connectableCommandFunc := func(fn func(clientFn clientFunc) *cobra.Command) func() *cobra.Command {
-		return func() *cobra.Command {
-			var projectID string
-			var namespace string
-			r := fn(func() (*datastorecli.Client, error) {
-				return newClient(projectID, namespace)
-			})
-			r.Flags().StringVar(&projectID, "project-id", "", "GCP Project ID")
-			r.Flags().StringVar(&namespace, "namespace", "", "namespace")
-			return r
-		}
-	}
-
 	rootCmd.AddCommand(connectableCommandFunc(func(clientFn clientFunc) *cobra.Command {
 		var offset int
 		var limit int
