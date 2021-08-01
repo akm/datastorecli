@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func putCommand(clientFn clientFunc) *cobra.Command {
+func PutCommand(clientFn ClientFunc) *cobra.Command {
 	var encodedParent string
 	var incompleteKey bool
 	r := &cobra.Command{

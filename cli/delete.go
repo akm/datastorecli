@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func deleteCommand(clientFn clientFunc) *cobra.Command {
+func DeleteCommand(clientFn ClientFunc) *cobra.Command {
 	var encodedParent string
 	r := &cobra.Command{
 		Use:   "delete KIND-OR-ENCODED-KEY [ID-OR-NAME]",

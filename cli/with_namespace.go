@@ -1,13 +1,13 @@
-package main
+package cli
 
 import (
 	"github.com/akm/datastorecli"
 	"github.com/spf13/cobra"
 )
 
-type namespaceFunc func() datastorecli.Namespace
+type NamespaceFunc func() datastorecli.Namespace
 
-func withNamespace(fn func(namespaceFunc) *cobra.Command) func() *cobra.Command {
+func WithNamespace(fn func(NamespaceFunc) *cobra.Command) func() *cobra.Command {
 	return func() *cobra.Command {
 		var namespace string
 		r := fn(func() datastorecli.Namespace {

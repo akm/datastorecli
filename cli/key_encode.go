@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func keyEncodeCommand(fn namespaceFunc) *cobra.Command {
+func KeyEncodeCommand(fn NamespaceFunc) *cobra.Command {
 	var id int64
 	var name string
 	var encodedParent string

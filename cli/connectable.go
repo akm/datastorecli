@@ -1,13 +1,13 @@
-package main
+package cli
 
 import (
 	"github.com/akm/datastorecli"
 	"github.com/spf13/cobra"
 )
 
-type clientFunc func() *datastorecli.Client
+type ClientFunc func() *datastorecli.Client
 
-func connectableCommandFunc(fn func(clientFn clientFunc) *cobra.Command) func() *cobra.Command {
+func ConnectableCommandFunc(fn func(clientFn ClientFunc) *cobra.Command) func() *cobra.Command {
 	return func() *cobra.Command {
 		var projectID string
 		var namespace string

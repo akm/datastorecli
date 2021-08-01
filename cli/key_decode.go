@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func keyDecodeCommand() *cobra.Command {
+func KeyDecodeCommand() *cobra.Command {
 	validateArgs := func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.Errorf("encoded-key is required")

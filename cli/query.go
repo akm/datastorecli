@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func queryCommand(clientFn clientFunc) *cobra.Command {
+func QueryCommand(clientFn ClientFunc) *cobra.Command {
 	var offset int
 	var limit int
 	var keysOnly bool

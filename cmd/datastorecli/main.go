@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/akm/datastorecli/cli"
 	"github.com/spf13/cobra"
 )
 
@@ -12,16 +13,16 @@ func main() {
 		Use: "datastorecli",
 	}
 
-	rootCmd.AddCommand(connectableCommandFunc(queryCommand)())
-	rootCmd.AddCommand(connectableCommandFunc(getCommand)())
-	rootCmd.AddCommand(connectableCommandFunc(putCommand)())
-	rootCmd.AddCommand(connectableCommandFunc(deleteCommand)())
+	rootCmd.AddCommand(cli.ConnectableCommandFunc(cli.QueryCommand)())
+	rootCmd.AddCommand(cli.ConnectableCommandFunc(cli.GetCommand)())
+	rootCmd.AddCommand(cli.ConnectableCommandFunc(cli.PutCommand)())
+	rootCmd.AddCommand(cli.ConnectableCommandFunc(cli.DeleteCommand)())
 	rootCmd.AddCommand((func() *cobra.Command {
 		keyCommand := &cobra.Command{
 			Use: "key",
 		}
-		keyCommand.AddCommand(withNamespace(keyEncodeCommand)())
-		keyCommand.AddCommand(keyDecodeCommand())
+		keyCommand.AddCommand(cli.WithNamespace(cli.KeyEncodeCommand)())
+		keyCommand.AddCommand(cli.KeyDecodeCommand())
 		return keyCommand
 	})())
 
