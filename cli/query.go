@@ -38,4 +38,4 @@ func QueryCommand(clientFn clientFunc) *cobra.Command {
 	return r
 }
 
-var Query = Connectable(QueryCommand)
+var Query = connectable(QueryCommand)

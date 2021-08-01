@@ -42,4 +42,4 @@ func DeleteCommand(clientFn clientFunc) *cobra.Command {
 	return r
 }
 
-var Delete = Connectable(DeleteCommand)
+var Delete = connectable(DeleteCommand)

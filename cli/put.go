@@ -57,4 +57,4 @@ func PutCommand(clientFn clientFunc) *cobra.Command {
 	return r
 }
 
-var Put = Connectable(PutCommand)
+var Put = connectable(PutCommand)

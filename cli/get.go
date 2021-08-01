@@ -45,4 +45,4 @@ func GetCommand(clientFn clientFunc) *cobra.Command {
 	return r
 }
 
-var Get = Connectable(GetCommand)
+var Get = connectable(GetCommand)
