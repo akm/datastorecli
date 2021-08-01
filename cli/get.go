@@ -38,7 +38,7 @@ func GetCommand(clientFn clientFunc) *cobra.Command {
 			if d, err := client.Get(context.Background(), key); err != nil {
 				return err
 			} else {
-				return formatters.NewDefaultWriter().FormatData(d)
+				return formatters.FormatData(formatterName, d)
 			}
 		},
 	}

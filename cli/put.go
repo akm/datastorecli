@@ -50,14 +50,14 @@ func PutCommand(clientFn clientFunc) *cobra.Command {
 			if resKey, err := client.Put(context.Background(), key, src); err != nil {
 				return err
 			} else {
-				return formatters.NewDefaultWriter().FormatStringer(resKey)
+				return formatters.FormatStringer("strings", resKey)
 			}
 		},
 	}
 
 	r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
 	r.Flags().BoolVar(&incompleteKey, "incomplete-key", false, "Incomplete key")
-	// r.Flags().StringVar(&formatterName, "formatter", "text", "options: text")
+	// r.Flags().StringVar(&formatterName, "formatter", "string", "options: string")
 	return r
 }
 

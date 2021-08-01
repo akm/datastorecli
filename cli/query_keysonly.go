@@ -21,7 +21,7 @@ func QueryKeysOnlyCommand(clientFn clientFunc) *cobra.Command {
 			if d, err := client.QueryKeys(ctx, kind, offset, limit); err != nil {
 				return err
 			} else {
-				return formatters.NewDefaultWriter().FormatStrings(d)
+				return formatters.FormatStrings(formatterName, d)
 			}
 		},
 	}

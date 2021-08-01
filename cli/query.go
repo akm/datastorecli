@@ -21,7 +21,7 @@ func QueryCommand(clientFn clientFunc) *cobra.Command {
 			if d, err := client.QueryData(ctx, kind, offset, limit); err != nil {
 				return err
 			} else {
-				return formatters.NewDefaultWriter().FormatArray(d)
+				return formatters.FormatArray(formatterName, d)
 			}
 		},
 	}
