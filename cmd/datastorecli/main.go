@@ -17,6 +17,7 @@ func main() {
 
 	rootCmd.AddCommand(
 		cli.Query(),
+		cli.QueryKeysOnly(),
 		cli.Get(),
 		cli.Put(),
 		cli.Delete(),

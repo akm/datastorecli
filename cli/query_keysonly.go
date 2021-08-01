@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func QueryCommand(clientFn clientFunc) *cobra.Command {
+func QueryKeysOnlyCommand(clientFn clientFunc) *cobra.Command {
 	var offset int
 	var limit int
 	r := &cobra.Command{
@@ -17,10 +17,10 @@ func QueryCommand(clientFn clientFunc) *cobra.Command {
 			client := clientFn()
 			ctx := context.Background()
 			kind := args[0]
-			if d, err := client.QueryData(ctx, kind, offset, limit); err != nil {
+			if d, err := client.QueryKeys(ctx, kind, offset, limit); err != nil {
 				return err
 			} else {
-				return formatters.NewDefaultWriter().FormatArray(d)
+				return formatters.NewDefaultWriter().FormatStrings(d)
 			}
 		},
 	}
@@ -29,4 +29,4 @@ func QueryCommand(clientFn clientFunc) *cobra.Command {
 	return r
 }
 
-var Query = connectable(QueryCommand)
+var QueryKeysOnly = connectable(QueryKeysOnlyCommand)
