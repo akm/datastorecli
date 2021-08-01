@@ -37,3 +37,5 @@ func QueryCommand(clientFn ClientFunc) *cobra.Command {
 	r.Flags().BoolVar(&keysOnly, "keys-only", false, "KeysOnly")
 	return r
 }
+
+var Query = Connectable(QueryCommand)

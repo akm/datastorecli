@@ -35,3 +35,5 @@ func KeyDecodeCommand() *cobra.Command {
 	}
 	return r
 }
+
+var KeyDecode = KeyDecodeCommand

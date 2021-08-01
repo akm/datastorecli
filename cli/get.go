@@ -44,3 +44,5 @@ func GetCommand(clientFn ClientFunc) *cobra.Command {
 	r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
 	return r
 }
+
+var Get = Connectable(GetCommand)

@@ -56,3 +56,5 @@ func PutCommand(clientFn ClientFunc) *cobra.Command {
 	r.Flags().BoolVar(&incompleteKey, "incomplete-key", false, "Incomplete key")
 	return r
 }
+
+var Put = Connectable(PutCommand)

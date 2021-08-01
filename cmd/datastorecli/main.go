@@ -14,13 +14,13 @@ func main() {
 	}
 
 	rootCmd.AddCommand(
-		cli.Connectable(cli.QueryCommand)(),
-		cli.Connectable(cli.GetCommand)(),
-		cli.Connectable(cli.PutCommand)(),
-		cli.Connectable(cli.DeleteCommand)(),
-		cli.GroupCommand("key",
-			cli.WithNamespace(cli.KeyEncodeCommand)(),
-			cli.KeyDecodeCommand(),
+		cli.Query(),
+		cli.Get(),
+		cli.Put(),
+		cli.Delete(),
+		cli.Group("key",
+			cli.KeyEncode(),
+			cli.KeyDecode(),
 		),
 	)
 

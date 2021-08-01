@@ -41,3 +41,5 @@ func DeleteCommand(clientFn ClientFunc) *cobra.Command {
 	r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
 	return r
 }
+
+var Delete = Connectable(DeleteCommand)
