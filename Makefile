@@ -3,6 +3,7 @@ MAIN_PACKAGE_PATH=./cmd/datastorecli
 PACKAGES_PATH=pkg
 
 VERSION=$(shell grep Version version.go | cut -f2 -d\")
+TAG_NAME=v$(VERSION)
 
 .PHONY: version
 version:
@@ -25,6 +26,5 @@ build-packages: $(GOX_PATH)
 		-os=darwin \
 		-os=linux \
 		-os=windows \
-		-output="pkg/{{.Dir}}_{{.OS}}_{{.Arch}}" \
+		-output="pkg/$(TAG_NAME)/{{.Dir}}-$(VERSION)-{{.OS}}_{{.Arch}}" \
 		$(MAIN_PACKAGE_PATH)
-
