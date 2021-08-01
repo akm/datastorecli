@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/akm/datastorecli"
 	"github.com/akm/datastorecli/cli"
 	"github.com/spf13/cobra"
 )
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use: "datastorecli",
+		Use:     "datastorecli",
+		Version: datastorecli.Version,
 	}
 
 	rootCmd.AddCommand(
