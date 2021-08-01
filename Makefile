@@ -34,4 +34,4 @@ $(GHR_PATH):
 
 .PHONY: release
 release: $(GHR_PATH) build-packages
-	ghr -draft $(TAG_NAME) $(PACKAGES_PATH)
+	ghr -n "$(TAG_NAME)" $(TAG_NAME) $(PACKAGES_PATH)
