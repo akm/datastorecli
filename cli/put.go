@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/akm/datastorecli/formatters"
 	"github.com/akm/datastorecli/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -48,7 +49,7 @@ func PutCommand(clientFn clientFunc) *cobra.Command {
 			if resKey, err := client.Put(context.Background(), key, src); err != nil {
 				return err
 			} else {
-				return formatStringer(resKey)
+				return formatters.NewDefaultWriter().FormatStringer(resKey)
 			}
 		},
 	}

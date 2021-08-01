@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 
+	"github.com/akm/datastorecli/formatters"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -36,7 +37,7 @@ func GetCommand(clientFn clientFunc) *cobra.Command {
 			if d, err := client.Get(context.Background(), key); err != nil {
 				return err
 			} else {
-				return formatData(d)
+				return formatters.NewDefaultWriter().FormatData(d)
 			}
 		},
 	}

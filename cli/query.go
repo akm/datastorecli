@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 
+	"github.com/akm/datastorecli/formatters"
 	"github.com/spf13/cobra"
 )
 
@@ -21,13 +22,13 @@ func QueryCommand(clientFn clientFunc) *cobra.Command {
 				if d, err := client.QueryKeys(ctx, kind, offset, limit); err != nil {
 					return err
 				} else {
-					return formatStrings(d)
+					return formatters.NewDefaultWriter().FormatStrings(d)
 				}
 			} else {
 				if d, err := client.QueryData(ctx, kind, offset, limit); err != nil {
 					return err
 				} else {
-					return formatArray(d)
+					return formatters.NewDefaultWriter().FormatArray(d)
 				}
 			}
 		},
