@@ -18,14 +18,10 @@ func main() {
 		cli.ConnectableCommandFunc(cli.GetCommand)(),
 		cli.ConnectableCommandFunc(cli.PutCommand)(),
 		cli.ConnectableCommandFunc(cli.DeleteCommand)(),
-		(func() *cobra.Command {
-			keyCommand := &cobra.Command{Use: "key"}
-			keyCommand.AddCommand(
-				cli.WithNamespace(cli.KeyEncodeCommand)(),
-				cli.KeyDecodeCommand(),
-			)
-			return keyCommand
-		})(),
+		cli.GroupCommand("key",
+			cli.WithNamespace(cli.KeyEncodeCommand)(),
+			cli.KeyDecodeCommand(),
+		),
 	)
 
 	if err := rootCmd.Execute(); err != nil {
