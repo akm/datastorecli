@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"cloud.google.com/go/datastore"
-	"github.com/akm/datastorecli"
+	"github.com/akm/datastorecli/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +20,7 @@ func KeyEncodeCommand(fn namespaceFunc) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			kind := args[0]
 
-			parentKey, err := datastorecli.DecodeKey(encodedParent)
+			parentKey, err := models.DecodeKey(encodedParent)
 			if err != nil {
 				return err
 			}

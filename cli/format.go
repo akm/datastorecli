@@ -28,6 +28,9 @@ func formatArray(d *[]interface{}) error {
 		if err := formatData(i); err != nil {
 			return err
 		}
+		if _, err := fmt.Fprintf(os.Stdout, "\n"); err != nil {
+			return err
+		}
 	}
 	return nil
 }
