@@ -7,7 +7,7 @@ import (
 
 type namespaceFunc func() datastorecli.Namespace
 
-func WithNamespace(fn func(namespaceFunc) *cobra.Command) func() *cobra.Command {
+func withNamespace(fn func(namespaceFunc) *cobra.Command) func() *cobra.Command {
 	return func() *cobra.Command {
 		var namespace string
 		r := fn(func() datastorecli.Namespace {

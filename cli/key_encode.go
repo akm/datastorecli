@@ -47,4 +47,4 @@ func KeyEncodeCommand(fn namespaceFunc) *cobra.Command {
 	return r
 }
 
-var KeyEncode = WithNamespace(KeyEncodeCommand)
+var KeyEncode = withNamespace(KeyEncodeCommand)
