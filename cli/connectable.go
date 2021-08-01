@@ -7,7 +7,7 @@ import (
 
 type ClientFunc func() *datastorecli.Client
 
-func ConnectableCommandFunc(fn func(clientFn ClientFunc) *cobra.Command) func() *cobra.Command {
+func Connectable(fn func(clientFn ClientFunc) *cobra.Command) func() *cobra.Command {
 	return func() *cobra.Command {
 		var projectID string
 		var namespace string
