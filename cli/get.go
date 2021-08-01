@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func GetCommand(clientFn ClientFunc) *cobra.Command {
+func GetCommand(clientFn clientFunc) *cobra.Command {
 	var encodedParent string
 	r := &cobra.Command{
 		Use:   "get KIND-OR-ENCODED-KEY [ID-OR-NAME]",

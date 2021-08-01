@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func PutCommand(clientFn ClientFunc) *cobra.Command {
+func PutCommand(clientFn clientFunc) *cobra.Command {
 	var encodedParent string
 	var incompleteKey bool
 	r := &cobra.Command{

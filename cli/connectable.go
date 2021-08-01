@@ -5,9 +5,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type ClientFunc func() *datastorecli.Client
+type clientFunc func() *datastorecli.Client
 
-func Connectable(fn func(clientFn ClientFunc) *cobra.Command) func() *cobra.Command {
+func Connectable(fn func(clientFn clientFunc) *cobra.Command) func() *cobra.Command {
 	return func() *cobra.Command {
 		var projectID string
 		var namespace string
