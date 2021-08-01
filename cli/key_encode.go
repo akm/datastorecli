@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func KeyEncodeCommand(fn NamespaceFunc) *cobra.Command {
+func KeyEncodeCommand(fn namespaceFunc) *cobra.Command {
 	var id int64
 	var name string
 	var encodedParent string
