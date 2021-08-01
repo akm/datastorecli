@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/akm/datastorecli"
+	"github.com/akm/datastorecli/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +21,7 @@ func KeyDecodeCommand() *cobra.Command {
 		Use:  "decode ENCODED-KEY",
 		Args: validateArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			key, err := datastorecli.DecodeKey(args[0])
+			key, err := models.DecodeKey(args[0])
 			if err != nil {
 				return err
 			}

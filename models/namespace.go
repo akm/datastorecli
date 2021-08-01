@@ -1,4 +1,4 @@
-package datastorecli
+package models
 
 import (
 	"context"

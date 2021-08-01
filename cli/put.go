@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/akm/datastorecli"
+	"github.com/akm/datastorecli/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -40,7 +40,7 @@ func PutCommand(clientFn clientFunc) *cobra.Command {
 				dataIndex = 2
 			}
 
-			src := datastorecli.AnyEntity{}
+			src := models.AnyEntity{}
 			if err := json.Unmarshal([]byte(args[dataIndex]), &src); err != nil {
 				return err
 			}
