@@ -63,3 +63,53 @@ $ datastorecli delete calcsvc 5646874153320448 --project-id=ayour-project
 $ echo $?
 0
 ```
+
+### Encode and Decode Key
+
+#### --id
+
+```
+$ datastorecli key encode calcsvc --id 5646874153320448; echo
+EhIKB2NhbGNzdmMQgICAwNX5gwo
+```
+
+```
+$ datastorecli key decode EhIKB2NhbGNzdmMQgICAwNX5gwo; echo
+/calcsvc,5646874153320448
+```
+
+#### --name
+
+```
+$ datastorecli key encode accounts --name user1@example.com; echo
+Eh0KCGFjY291bnRzGhF1c2VyMUBleGFtcGxlLmNvbQ
+```
+
+```
+$ datastorecli key decode Eh0KCGFjY291bnRzGhF1c2VyMUBleGFtcGxlLmNvbQ; echo
+/accounts,user1@example.com
+```
+
+#### --namespace
+
+```
+$ datastorecli key encode accounts --name user1@example.com --namespace shop1; echo
+CgciBXNob3AxEh0KCGFjY291bnRzGhF1c2VyMUBleGFtcGxlLmNvbQ
+```
+
+```
+$ datastorecli key decode CgciBXNob3AxEh0KCGFjY291bnRzGhF1c2VyMUBleGFtcGxlLmNvbQ; echo
+/accounts,user1@example.com (namespace:shop1)
+```
+
+#### --encoded-parent
+
+```
+$ datastorecli key encode account_logs --id 123456789 --encoded-parent Eh0KCGFjY291bnRzGhF1c2VyMUBleGFtcGxlLmNvbQ; echo
+Eh0KCGFjY291bnRzGhF1c2VyMUBleGFtcGxlLmNvbRITCgxhY2NvdW50X2xvZ3MQlZrvOg
+```
+
+```
+$ datastorecli key decode Eh0KCGFjY291bnRzGhF1c2VyMUBleGFtcGxlLmNvbRITCgxhY2NvdW50X2xvZ3MQlZrvOg; echo
+/accounts,user1@example.com/account_logs,123456789
+```
