@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+gcloud config set project ${DATASTORE_PROJECT_ID}
+
+gcloud beta emulators datastore start \
+  --data-dir=${DATASTORE_DATA_DIR} \
+  --host-port=${DATASTORE_LISTEN_ADDRESS} \
+  --verbosity=${DATASTORE_VERBOSITY:-info}

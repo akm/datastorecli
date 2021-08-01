@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  datastore:
+    build: "./containers/datastore"
+    image: "datastorecli-datastore"
+    tmpfs:
+      - ${DATASTORE_DATA_DIR}
+    environment:
+      DATASTORE_PROJECT_ID: dummy
+      DATASTORE_LISTEN_ADDRESS: 0.0.0.0:${TEST_DATASTORE_PORT}
+      DATASTORE_DATA_DIR: ${DATASTORE_DATA_DIR}
+      DATASTORE_VERBOSITY: info
+    ports:
+      - "${TEST_DATASTORE_PORT}:${TEST_DATASTORE_PORT}"
+    networks:
+      - datastorecli-test
+
+networks:
+  datastorecli-test:
