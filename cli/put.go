@@ -13,6 +13,7 @@ import (
 func PutCommand(clientFn clientFunc) *cobra.Command {
 	var encodedParent string
 	var incompleteKey bool
+	// var formatterName string
 	r := &cobra.Command{
 		Use:   "put KIND-OR-ENCODED-KEY [ID-OR-NAME-OR-JSON-DATA] [JSON-DATA]",
 		Short: "Pet an entity",
@@ -56,6 +57,7 @@ func PutCommand(clientFn clientFunc) *cobra.Command {
 
 	r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
 	r.Flags().BoolVar(&incompleteKey, "incomplete-key", false, "Incomplete key")
+	// r.Flags().StringVar(&formatterName, "formatter", "text", "options: text")
 	return r
 }
 

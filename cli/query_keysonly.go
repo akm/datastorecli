@@ -10,6 +10,7 @@ import (
 func QueryKeysOnlyCommand(clientFn clientFunc) *cobra.Command {
 	var offset int
 	var limit int
+	var formatterName string
 	r := &cobra.Command{
 		Use:  "query KIND",
 		Args: validateFirstArgAsKind,
@@ -26,6 +27,7 @@ func QueryKeysOnlyCommand(clientFn clientFunc) *cobra.Command {
 	}
 	r.Flags().IntVar(&offset, "offset", 0, "offset")
 	r.Flags().IntVar(&limit, "limit", 10, "limit")
+	r.Flags().StringVar(&formatterName, "formatter", "strings", "options: strings, json, pretty-json")
 	return r
 }
 

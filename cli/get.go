@@ -10,6 +10,7 @@ import (
 
 func GetCommand(clientFn clientFunc) *cobra.Command {
 	var encodedParent string
+	var formatterName string
 	r := &cobra.Command{
 		Use:   "get KIND-OR-ENCODED-KEY [ID-OR-NAME]",
 		Short: "Get an entity",
@@ -43,6 +44,7 @@ func GetCommand(clientFn clientFunc) *cobra.Command {
 	}
 
 	r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
+	r.Flags().StringVar(&formatterName, "formatter", "json", "options: json or pretty-json")
 	return r
 }
 
