@@ -27,7 +27,7 @@ func QueryKeysOnlyCommand(clientFn clientFunc) *cobra.Command {
 	}
 	r.Flags().IntVar(&offset, "offset", 0, "offset")
 	r.Flags().IntVar(&limit, "limit", 10, "limit")
-	r.Flags().StringVar(&formatterName, "formatter", "strings", "options: strings, json, pretty-json")
+	r.Flags().StringVar(&formatterName, "format", "strings", "options: strings, json, pretty-json")
 	return r
 }
 

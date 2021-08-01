@@ -57,7 +57,7 @@ func PutCommand(clientFn clientFunc) *cobra.Command {
 
 	r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
 	r.Flags().BoolVar(&incompleteKey, "incomplete-key", false, "Incomplete key")
-	// r.Flags().StringVar(&formatterName, "formatter", "string", "options: string")
+	// r.Flags().StringVar(&formatterName, "format", "string", "options: string")
 	return r
 }
 

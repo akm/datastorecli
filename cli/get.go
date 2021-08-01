@@ -44,7 +44,7 @@ func GetCommand(clientFn clientFunc) *cobra.Command {
 	}
 
 	r.Flags().StringVar(&encodedParent, "encoded-parent", "", "Encoded parent key")
-	r.Flags().StringVar(&formatterName, "formatter", "json", "options: json or pretty-json")
+	r.Flags().StringVar(&formatterName, "format", "json", "options: json or pretty-json")
 	return r
 }
 
